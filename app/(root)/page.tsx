@@ -10,7 +10,7 @@ export default async function Home({searchParams} : {
     const posts = [{
         _createdAt: new Date(),
         views: 55,
-        author: {_id: 1},
+        author: {_id: 1, name: "Elon Musk"},
         _id: 1,
         description: 'This is a description.',
         image: "https://www.freepik.com/free-vector/startup-development_6089398.htm",
