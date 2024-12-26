@@ -1,19 +1,18 @@
-"use client"
+"use client";
 
-import React, {useActionState, useState} from 'react'
-import {Input} from "@/components/ui/input";
-import {Textarea} from "@/components/ui/textarea";
+import React, { useState, useActionState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import MDEditor from "@uiw/react-md-editor";
-import { Button } from './ui/button';
-import {Send} from "lucide-react";
-import {formSchema} from "@/lib/validation";
-// import { createPitch } from "@/lib/actions";
-import {z} from "zod";
-import {useToast} from "@/hooks/use-toast";
-import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import { Send } from "lucide-react";
+import { formSchema } from "@/lib/validation";
+import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { createPitch } from "@/lib/actions";
 
 const StartupForm = () => {
-
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [pitch, setPitch] = useState("");
     const { toast } = useToast();
@@ -31,16 +30,18 @@ const StartupForm = () => {
 
             await formSchema.parseAsync(formValues);
 
-            // const result = await createPitch(prevState, formData, pitch);
-            //
-            // if (result.status == "SUCCESS") {
-            //     toast({
-            //         title: "Success",
-            //         description: "Your startup pitch has been created successfully",
-            //     });
-            //     router.push(`/startup/${result._id}`);
-            // }
-            // return result;
+            const result = await createPitch(prevState, formData, pitch);
+
+            if (result.status == "SUCCESS") {
+                toast({
+                    title: "Success",
+                    description: "Your startup pitch has been created successfully",
+                });
+
+                router.push(`/startup/${result._id}`);
+            }
+
+            return result;
         } catch (error) {
             if (error instanceof z.ZodError) {
                 const fieldErorrs = error.flatten().fieldErrors;
@@ -74,9 +75,9 @@ const StartupForm = () => {
         error: "",
         status: "INITIAL",
     });
+
     return (
-        <form action={() => {
-        }} className="startup-form">
+        <form action={formAction} className="startup-form">
             <div>
                 <label htmlFor="title" className="startup-form_label">
                     Title
@@ -88,6 +89,7 @@ const StartupForm = () => {
                     required
                     placeholder="Startup Title"
                 />
+
                 {errors.title && <p className="startup-form_error">{errors.title}</p>}
             </div>
 
@@ -107,7 +109,6 @@ const StartupForm = () => {
                     <p className="startup-form_error">{errors.description}</p>
                 )}
             </div>
-
 
             <div>
                 <label htmlFor="category" className="startup-form_label">
@@ -152,7 +153,7 @@ const StartupForm = () => {
                     id="pitch"
                     preview="edit"
                     height={300}
-                    style={{borderRadius: 20, overflow: "hidden"}}
+                    style={{ borderRadius: 20, overflow: "hidden" }}
                     textareaProps={{
                         placeholder:
                             "Briefly describe your idea and what problem it solves",
@@ -164,14 +165,17 @@ const StartupForm = () => {
 
                 {errors.pitch && <p className="startup-form_error">{errors.pitch}</p>}
             </div>
-            
-            <Button type="submit" className="startup-form_btn text-white" disabled={isPending}>
+
+            <Button
+                type="submit"
+                className="startup-form_btn text-white"
+                disabled={isPending}
+            >
                 {isPending ? "Submitting..." : "Submit Your Pitch"}
                 <Send className="size-6 ml-2" />
             </Button>
-
-
         </form>
-    )
-}
+    );
+};
+
 export default StartupForm;
